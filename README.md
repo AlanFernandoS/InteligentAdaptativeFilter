@@ -87,9 +87,10 @@ class FiltroInteligente{
 		h(x)=mx+b
 		Where 
 		e=1/2*(y-h(x))^2
-		de/dk=(y-h(x))*(Vin) //Remeber that y-h(x) is a number that will be multiplied by a vector
-		//(y-h(x))*(Vin) => This will be a vector
-		k(n)=k(n-1)+de/dk =>Remeber that k is a vector and de/dk also
+		de/dk=(y-h(x))*(-Vin) //Remeber that y-h(x) is a number that will be multiplied by a vector
+		//(y-h(x))*(-Vin) => This will be a vector
+		//k(n)=k(n-1)-(y-h(x))*(-Vin)=> This will be a vector
+		k(n)=k(n-1)+(y-h(x))*(Vin) =>Remeber that k is a vector and de/dk also
 	*/
 	void TraingOnce(float WanttedData){
 		ProductoYPrecedir();
