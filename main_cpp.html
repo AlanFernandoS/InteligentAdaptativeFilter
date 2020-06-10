@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>C:\Users\alanf\Documents\Alan\DesarrolloDeMouse\Algoritmo\main.cpp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="SynEdit HTML exporter" />
+<style type="text/css">
+<!--
+body { color: #000000; background-color: #FFFFFF; }
+.cpp1-assembler { color: #0000FF; }
+.cpp1-character { color: #000000; }
+.cpp1-comment { color: #0078D7; font-style: italic; }
+.cpp1-float { color: #800080; }
+.cpp1-hexadecimal { color: #800080; }
+.cpp1-identifier { color: #000000; }
+.cpp1-illegalchar { color: #000000; }
+.cpp1-number { color: #800080; }
+.cpp1-octal { color: #800080; }
+.cpp1-preprocessor { color: #008000; }
+.cpp1-reservedword { color: #000000; font-weight: bold; }
+.cpp1-space { background-color: #FFFFFF; color: #000000; }
+.cpp1-string { color: #0000FF; font-weight: bold; }
+.cpp1-symbol { color: #FF0000; font-weight: bold; }
+-->
+</style>
+</head>
+<body>
+<pre>
+<code><span style="font: 13pt Consolas;"><span class="cpp1-preprocessor">#include &lt;iostream&gt;
+#include &lt;math.h&gt;
+#include &lt;stdlib.h&gt; 
+#include &lt;time.h&gt; 
+</span><span class="cpp1-comment">//What number of elements do you want 
+</span><span class="cpp1-preprocessor">#define BackFilter 5
+</span><span class="cpp1-comment">//What will your Learning parameter
+</span><span class="cpp1-preprocessor">#define LearningParameter 0.1
+</span><span class="cpp1-comment">/* run this program using the console pauser or add your own getch, system(&quot;pause&quot;) or input loop */
+
+</span><span class="cpp1-reservedword">class</span><span class="cpp1-space"> FiltroInteligente</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//We have three variables with all the information
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> Vin</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">];</span><span class="cpp1-space"> </span><span class="cpp1-comment">//Input values
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> Kca</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">];</span><span class="cpp1-space"> </span><span class="cpp1-comment">//K parameters
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> Pro</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">];</span><span class="cpp1-space"> </span><span class="cpp1-comment">//=inputs * K parameters
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//Method to clean the vectors
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> ClearData</span><span class="cpp1-symbol">(){
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">&lt;</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">;</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">++)</span><span class="cpp1-space">	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">			Vin</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">			Pro</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//Limpieza del vector de datos
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> ClearProd</span><span class="cpp1-symbol">(){
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">&lt;</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">;</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">++)</span><span class="cpp1-space">	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">			Pro</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//Funcion para predecir los datos
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">public</span><span class="cpp1-symbol">:</span><span class="cpp1-space"> 
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> Result</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> Wantted</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> ErrorN</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> ErrorS</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//Randomize K
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> RandomizeK</span><span class="cpp1-symbol">(){
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">&lt;</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">;</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">++)</span><span class="cpp1-space">	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">			Kca</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]=</span><span class="cpp1-identifier">rand</span><span class="cpp1-symbol">()%</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	 	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// Make the operacion of Result=sum(Vin*Kpar) Remeber that Vin and Kpar are vectors
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> ProductoYPrecedir</span><span class="cpp1-symbol">(){
+</span><span class="cpp1-space">		Result</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">&lt;</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">;</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">++)</span><span class="cpp1-space">	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">			Pro</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]=</span><span class="cpp1-identifier">Vin</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]*</span><span class="cpp1-identifier">Kca</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">];
+</span><span class="cpp1-space">			Result</span><span class="cpp1-symbol">=</span><span class="cpp1-identifier">Pro</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]+</span><span class="cpp1-identifier">Result</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	 	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//Initialize the class
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> Initialize</span><span class="cpp1-symbol">(){
+</span><span class="cpp1-space">		ClearData</span><span class="cpp1-symbol">();
+</span><span class="cpp1-space">		RandomizeK</span><span class="cpp1-symbol">();
+</span><span class="cpp1-space">		Vin</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">-</span><span class="cpp1-number">1</span><span class="cpp1-symbol">]=</span><span class="cpp1-number">1</span><span class="cpp1-symbol">;</span><span class="cpp1-space"> </span><span class="cpp1-comment">//La ultima posicion es el desface llamada Beta
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//Print my data of learning
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> PrintMySavedData</span><span class="cpp1-symbol">(){
+</span><span class="cpp1-space">		printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;Saved:\t&quot;</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">&lt;</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">;</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">++)</span><span class="cpp1-space">	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">			printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;%3.3f\t&quot;</span><span class="cpp1-symbol">,</span><span class="cpp1-identifier">Vin</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]);
+</span><span class="cpp1-space">	 	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	 	printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;\nK:\t&quot;</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">&lt;</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">;</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">++)</span><span class="cpp1-space">	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">			printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;%3.3f\t&quot;</span><span class="cpp1-symbol">,</span><span class="cpp1-identifier">Kca</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]);
+</span><span class="cpp1-space">	 	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//Insert an X value, remember the last position are 1 because
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">/*
+	y=mx+b
+	Where K are a vector that represents m
+	And Vin are a vector that represents x
+	But the b can be absorbed with
+	[x1,x2,x3,...] point [k1,k2,k3] +b =&gt; [x1,x2,x3,..,1] point [k1,k2,k3,b]
+	*/
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> AddX</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> Add</span><span class="cpp1-symbol">){
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">&lt;(</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">-</span><span class="cpp1-number">1</span><span class="cpp1-symbol">);</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">++)</span><span class="cpp1-space">	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">			Vin</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]=</span><span class="cpp1-identifier">Vin</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">+</span><span class="cpp1-number">1</span><span class="cpp1-symbol">];
+</span><span class="cpp1-space">	 	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	 	Vin</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">-</span><span class="cpp1-number">2</span><span class="cpp1-symbol">]=</span><span class="cpp1-identifier">Add</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//This traing the model One Time
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">/*Using 
+		h(x)=mx+b
+		Where 
+		e=1/2*(y-h(x))^2
+		de/dk=(y-h(x))*(-Vin) //Remeber that y-h(x) is a number that will be multiplied by a vector
+		//(y-h(x))*(Vin) =&gt; This will be a vector
+		k(n)=k(n-1)+de/dk =&gt;Remeber that k is a vector and de/dk also
+	*/
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> TraingOnce</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> WanttedData</span><span class="cpp1-symbol">){
+</span><span class="cpp1-space">		ProductoYPrecedir</span><span class="cpp1-symbol">();
+</span><span class="cpp1-space">		ErrorN</span><span class="cpp1-symbol">=</span><span class="cpp1-identifier">WanttedData</span><span class="cpp1-symbol">-</span><span class="cpp1-identifier">Result</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		ErrorS</span><span class="cpp1-symbol">=</span><span class="cpp1-number">1</span><span class="cpp1-symbol">/</span><span class="cpp1-number">2</span><span class="cpp1-symbol">*(</span><span class="cpp1-identifier">ErrorN</span><span class="cpp1-symbol">)*</span><span class="cpp1-identifier">ErrorN</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">&lt;</span><span class="cpp1-identifier">BackFilter</span><span class="cpp1-symbol">;</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">++)</span><span class="cpp1-space">	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">			Kca</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]=</span><span class="cpp1-identifier">Kca</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]+(</span><span class="cpp1-identifier">ErrorN</span><span class="cpp1-symbol">*</span><span class="cpp1-identifier">Vin</span><span class="cpp1-symbol">[</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">]*</span><span class="cpp1-identifier">LearningParameter</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">	 	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+};
+</span><span class="cpp1-comment">//Signal of testing
+</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> Signal2Analize</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> Time</span><span class="cpp1-symbol">){
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> sin</span><span class="cpp1-symbol">(</span><span class="cpp1-identifier">Time</span><span class="cpp1-symbol">*</span><span class="cpp1-float">3.14</span><span class="cpp1-symbol">/</span><span class="cpp1-number">180</span><span class="cpp1-symbol">);
+}
+</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> SignalWithNoise</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> Time</span><span class="cpp1-symbol">){
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> sin</span><span class="cpp1-symbol">(</span><span class="cpp1-identifier">Time</span><span class="cpp1-symbol">*</span><span class="cpp1-float">3.14</span><span class="cpp1-symbol">/</span><span class="cpp1-number">180</span><span class="cpp1-symbol">)+</span><span class="cpp1-float">0.02</span><span class="cpp1-symbol">+</span><span class="cpp1-identifier">sin</span><span class="cpp1-symbol">(</span><span class="cpp1-number">20</span><span class="cpp1-symbol">*</span><span class="cpp1-identifier">Time</span><span class="cpp1-symbol">*</span><span class="cpp1-float">3.14</span><span class="cpp1-symbol">/</span><span class="cpp1-number">180</span><span class="cpp1-symbol">);
+}
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> main</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> argc</span><span class="cpp1-symbol">,</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">char</span><span class="cpp1-symbol">**</span><span class="cpp1-space"> argv</span><span class="cpp1-symbol">)</span><span class="cpp1-space"> </span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">	FiltroInteligente MyFilter</span><span class="cpp1-symbol">;</span><span class="cpp1-space">	
+	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> TimeA</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> Signal</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">float</span><span class="cpp1-space"> WithNoise</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">Initialize</span><span class="cpp1-symbol">();
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">bool</span><span class="cpp1-space"> OnlyOne</span><span class="cpp1-symbol">=</span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> ConterMaxTraining</span><span class="cpp1-symbol">=</span><span class="cpp1-number">20</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	srand </span><span class="cpp1-symbol">(</span><span class="cpp1-identifier">time</span><span class="cpp1-symbol">(</span><span class="cpp1-identifier">NULL</span><span class="cpp1-symbol">));
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//El ciclo es infinito
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">while</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">true</span><span class="cpp1-symbol">){</span><span class="cpp1-space"> 
+	</span><span class="cpp1-comment">/*Unsupervised
+		Signal=Signal2Analize(TimeA);
+		MyFilter.ProductoYPrecedir();
+		printf(&quot;Prediction\n&quot;);
+		printf(&quot;Kn: %f \tSk: %f \tPredicted:%f&quot;,TimeA,Signal,MyFilter.Result);
+		if(ConterMaxTraining&gt;0){
+			printf(&quot;\nBoost Training Mode\nBefore \n&quot;);
+			MyFilter.PrintMySavedData();
+			for(int i=0;i&lt;20;i++){
+				MyFilter.TraingOnce(Signal);
+			}
+			printf(&quot;\nNext to training\n&quot;);
+			printf(&quot;Data: %f \t %f \tPredicted:%f\n&quot;,TimeA,Signal,MyFilter.Result);
+			MyFilter.PrintMySavedData();
+			ConterMaxTraining=ConterMaxTraining-1;
+			printf(&quot;\n Error =  %f \n&quot;, MyFilter.ErrorN);
+		}else{
+			//Continous Learning
+			for(int i=0;i&lt;3;i++){
+				MyFilter.TraingOnce(Signal);
+			}
+			printf(&quot;\n Continuos learning\n&quot;);
+			MyFilter.PrintMySavedData();
+			printf(&quot;\n Error =  %f \n&quot;, MyFilter.ErrorN);	
+		}
+
+		MyFilter.AddX(Signal);
+		TimeA=TimeA+1;
+		if(TimeA&gt;100){
+			break;
+		}
+	*/
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//Superviced
+</span><span class="cpp1-space">		Signal</span><span class="cpp1-symbol">=</span><span class="cpp1-identifier">Signal2Analize</span><span class="cpp1-symbol">(</span><span class="cpp1-identifier">TimeA</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">		WithNoise</span><span class="cpp1-symbol">=</span><span class="cpp1-identifier">SignalWithNoise</span><span class="cpp1-symbol">(</span><span class="cpp1-identifier">TimeA</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">		MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">ProductoYPrecedir</span><span class="cpp1-symbol">();
+</span><span class="cpp1-space">		printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;Prediction\n&quot;</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">		printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;Kn: %f \tSk: %f \tSn: %f\tPredicted:%f&quot;</span><span class="cpp1-symbol">,</span><span class="cpp1-identifier">TimeA</span><span class="cpp1-symbol">,</span><span class="cpp1-identifier">Signal</span><span class="cpp1-symbol">,</span><span class="cpp1-identifier">WithNoise</span><span class="cpp1-symbol">,</span><span class="cpp1-identifier">MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">Result</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(</span><span class="cpp1-identifier">ConterMaxTraining</span><span class="cpp1-symbol">&gt;</span><span class="cpp1-number">0</span><span class="cpp1-symbol">){
+</span><span class="cpp1-space">			printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;\nBoost Training Mode\nBefore \n&quot;</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">			MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">PrintMySavedData</span><span class="cpp1-symbol">();
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">&lt;</span><span class="cpp1-number">20</span><span class="cpp1-symbol">;</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">++){
+</span><span class="cpp1-space">				MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">TraingOnce</span><span class="cpp1-symbol">(</span><span class="cpp1-identifier">Signal</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">			</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">			printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;\nNext to training\n&quot;</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">			printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;Data: %f \t %f \tPredicted:%f\n&quot;</span><span class="cpp1-symbol">,</span><span class="cpp1-identifier">TimeA</span><span class="cpp1-symbol">,</span><span class="cpp1-identifier">Signal</span><span class="cpp1-symbol">,</span><span class="cpp1-identifier">MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">Result</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">			MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">PrintMySavedData</span><span class="cpp1-symbol">();
+</span><span class="cpp1-space">			ConterMaxTraining</span><span class="cpp1-symbol">=</span><span class="cpp1-identifier">ConterMaxTraining</span><span class="cpp1-symbol">-</span><span class="cpp1-number">1</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">			printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;\n Error =  %f \n&quot;</span><span class="cpp1-symbol">,</span><span class="cpp1-space"> MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">ErrorN</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">		</span><span class="cpp1-symbol">}</span><span class="cpp1-reservedword">else</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">			</span><span class="cpp1-comment">//Continous Learning
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">for</span><span class="cpp1-symbol">(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i</span><span class="cpp1-symbol">=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">&lt;</span><span class="cpp1-number">3</span><span class="cpp1-symbol">;</span><span class="cpp1-identifier">i</span><span class="cpp1-symbol">++){
+</span><span class="cpp1-space">				MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">TraingOnce</span><span class="cpp1-symbol">(</span><span class="cpp1-identifier">Signal</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">			</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">			printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;\n Continuos learning\n&quot;</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">			MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">PrintMySavedData</span><span class="cpp1-symbol">();
+</span><span class="cpp1-space">			printf</span><span class="cpp1-symbol">(</span><span class="cpp1-string">&quot;\n Error =  %f \n&quot;</span><span class="cpp1-symbol">,</span><span class="cpp1-space"> MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">ErrorN</span><span class="cpp1-symbol">);</span><span class="cpp1-space">	
+		</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">		</span><span class="cpp1-comment">//Did you see this we are adding the signal with Noise
+</span><span class="cpp1-space">		MyFilter</span><span class="cpp1-symbol">.</span><span class="cpp1-identifier">AddX</span><span class="cpp1-symbol">(</span><span class="cpp1-identifier">WithNoise</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">		TimeA</span><span class="cpp1-symbol">=</span><span class="cpp1-identifier">TimeA</span><span class="cpp1-symbol">+</span><span class="cpp1-number">1</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(</span><span class="cpp1-identifier">TimeA</span><span class="cpp1-symbol">&gt;</span><span class="cpp1-number">100</span><span class="cpp1-symbol">){
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+}
+
+</span></span>
+</code></pre>
+</body>
+</html>
