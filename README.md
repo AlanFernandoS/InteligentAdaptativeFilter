@@ -101,3 +101,4 @@ class FiltroInteligente{
 	 	}
 	}
 };
+#To se the code you can download the code, or download the .html pages, the code was developed on DevC++
